@@ -33,7 +33,7 @@ func Register(db *sql.DB, user models.User) (models.User, error) {
 }
 
 func Login(db *sql.DB, user models.User) (models.User, error) {
-	const sqlStr = `select * from users where email ?;`
+	const sqlStr = `select * from users where email = ?;`
 	row := db.QueryRow(sqlStr, user.Email)
 	if err := row.Err(); err != nil {
 		return models.User{}, err

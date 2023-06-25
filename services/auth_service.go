@@ -15,9 +15,6 @@ func (s *Service) RegisterService(user models.User) (models.User, error) {
 	if exists {
 		return models.User{}, fmt.Errorf("this email already registered")
 	}
-	if err != nil {
-		return models.User{}, err
-	}
 	registeredUser, err := repositories.Register(s.db, user)
 	if err != nil {
 		return models.User{}, err
