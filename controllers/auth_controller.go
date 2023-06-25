@@ -5,11 +5,15 @@ import (
 	"net/http"
 
 	"github.com/57th-street/oza-gueser/controllers/services"
-	"github.com/57th-street/oza-gueser/models"
 )
 
 type AuthController struct {
 	service services.AuthServicer
+}
+
+type UserInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func NewAuthController(s services.AuthServicer) *AuthController {
@@ -17,29 +21,33 @@ func NewAuthController(s services.AuthServicer) *AuthController {
 }
 
 func (c *AuthController) RegisterController(w http.ResponseWriter, req *http.Request) {
-	var user models.User
-	if err := json.NewDecoder(req.Body).Decode(&user); err != nil {
+	var input UserInput
+	if err := json.NewDecoder(req.Body).Decode(&input); err != nil {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 		return
 	}
-	user, err := c.service.RegisterService(user)
+	err := c.service.Register(input.Email, input.Password)
 	if err != nil {
 		http.Error(w, "fail to register\n", http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(user)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (c *AuthController) LoginController(w http.ResponseWriter, req *http.Request) {
-	var user models.User
-	if err := json.NewDecoder(req.Body).Decode(&user); err != nil {
+	var input UserInput
+	if err := json.NewDecoder(req.Body).Decode(&input); err != nil {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 		return
 	}
-	user, err := c.service.LoginService(user)
+	isAuthUser, err := c.service.Login(input.Email, input.Password)
 	if err != nil {
-		http.Error(w, "fail to register\n", http.StatusInternalServerError)
+		http.Error(w, "fail to login\n", http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(user)
+	if isAuthUser {
+		http.Error(w, "Authentication failed\n", http.StatusUnauthorized)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }

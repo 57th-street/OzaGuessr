@@ -3,29 +3,35 @@ package services
 import (
 	"fmt"
 
-	"github.com/57th-street/oza-gueser/models"
 	"github.com/57th-street/oza-gueser/repositories"
+	"github.com/57th-street/oza-gueser/utils"
 )
 
-func (s *Service) RegisterService(user models.User) (models.User, error) {
-	exists, err := repositories.CheckUserExist(s.db, user.Email)
+func (s *Service) Register(email, password string) error {
+	exists, err := repositories.CheckUserExist(s.db, email)
 	if err != nil {
-		return models.User{}, err
+		return err
 	}
 	if exists {
-		return models.User{}, fmt.Errorf("this email already registered")
+		return fmt.Errorf("this email already registered")
 	}
-	registeredUser, err := repositories.Register(s.db, user)
+	hashedPassword, err := utils.HashPassword(password)
 	if err != nil {
-		return models.User{}, err
+		return fmt.Errorf("fail to hash password")
 	}
-	return registeredUser, nil
+	if err := repositories.CreateUser(s.db, email, hashedPassword); err != nil {
+		return fmt.Errorf("fail to record data")
+	}
+	return nil
 }
 
-func (s *Service) LoginService(user models.User) (models.User, error) {
-	loggedInUser, err := repositories.Login(s.db, user)
+func (s *Service) Login(email, password string) (bool, error) {
+	hashedPassword, err := repositories.GetUserPassword(s.db, email)
 	if err != nil {
-		return models.User{}, err
+		return false, fmt.Errorf("fail to get data")
 	}
-	return loggedInUser, nil
+	if err = utils.CompareHashAndPassword(hashedPassword, password); err != nil {
+		return false, fmt.Errorf("email or password is incorrect")
+	}
+	return true, nil
 }
