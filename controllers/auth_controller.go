@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/57th-street/oza-gueser/apperrors"
 	"github.com/57th-street/oza-gueser/controllers/services"
 )
 
@@ -23,13 +24,11 @@ func NewAuthController(s services.AuthServicer) *AuthController {
 func (c *AuthController) RegisterController(w http.ResponseWriter, req *http.Request) {
 	var input UserInput
 	if err := json.NewDecoder(req.Body).Decode(&input); err != nil {
-		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
-		return
+		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
+		apperrors.ErrorHandler(w, req, err)
 	}
-	err := c.service.Register(input.Email, input.Password)
-	if err != nil {
-		http.Error(w, "fail to register\n", http.StatusInternalServerError)
-		return
+	if err := c.service.Register(input.Email, input.Password); err != nil {
+		apperrors.ErrorHandler(w, req, err)
 	}
 	w.WriteHeader(http.StatusOK)
 }
@@ -37,17 +36,12 @@ func (c *AuthController) RegisterController(w http.ResponseWriter, req *http.Req
 func (c *AuthController) LoginController(w http.ResponseWriter, req *http.Request) {
 	var input UserInput
 	if err := json.NewDecoder(req.Body).Decode(&input); err != nil {
-		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
-		return
+		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
+		apperrors.ErrorHandler(w, req, err)
 	}
-	isAuthUser, err := c.service.Login(input.Email, input.Password)
+	err := c.service.Login(input.Email, input.Password)
 	if err != nil {
-		http.Error(w, "fail to login\n", http.StatusInternalServerError)
-		return
-	}
-	if isAuthUser {
-		http.Error(w, "Authentication failed\n", http.StatusUnauthorized)
-		return
+		apperrors.ErrorHandler(w, req, err)
 	}
 	w.WriteHeader(http.StatusOK)
 }
