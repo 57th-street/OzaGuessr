@@ -6,4 +6,4 @@ create table if not exists users (
 );
 
 insert into users (email, password, created_at) values
-	('test@test.com', '$2a$10$qf.9gh7iLVLkqZ1FcDggReI3RaLK8fpztigA8QVJbW9IdH4hZ9j2W', now());
+	('test@test.com', 'hashedPassword', now());

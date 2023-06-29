@@ -3,8 +3,8 @@ package repositories_test
 import (
 	"testing"
 
-	"github.com/57th-street/oza-gueser/models"
 	"github.com/57th-street/oza-gueser/repositories"
+	"github.com/57th-street/oza-gueser/repositories/testdata"
 )
 
 func TestCheckUserExist(t *testing.T) {
@@ -15,7 +15,7 @@ func TestCheckUserExist(t *testing.T) {
 	}{
 		{
 			name:     "normal case test",
-			email:    "test@test.com",
+			email:    testdata.UserTestData.Email,
 			expected: true,
 		},
 		{
@@ -37,36 +37,34 @@ func TestCheckUserExist(t *testing.T) {
 	}
 }
 
-func TestRegister(t *testing.T) {
-	user := models.User{
-		Email:    "test2@test.com",
-		Password: "test1234",
-	}
-	expectedId := 2
-	newUser, err := repositories.Register(testDB, user)
+func TestCreateUser(t *testing.T) {
+	email := "test2@test.com"
+	password := "hashedPassword2"
+	err := repositories.CreateUser(testDB, email, password)
 	if err != nil {
 		t.Error(err)
 	}
-	if expectedId != newUser.ID {
-		t.Errorf("got %d but want %d", newUser.ID, expectedId)
+	var actualCount int
+	expectedCount := 1
+	sqlStr := "select count(*) from users where email = ? and password = ?"
+	err = testDB.QueryRow(sqlStr, email, password).Scan(&actualCount)
+	if actualCount != expectedCount {
+		t.Errorf("got %d but want %d", actualCount, expectedCount)
 	}
 	t.Cleanup(func() {
 		const sqlStr = "delete from users where email = ?"
-		testDB.Exec(sqlStr, user.Email)
+		testDB.Exec(sqlStr, email)
 	})
 }
 
-func TestLogin(t *testing.T) {
-	user := models.User{
-		Email:    "test@test.com",
-		Password: "test1234",
-	}
-	expectedId := 1
-	loginInUser, err := repositories.Login(testDB, user)
+func TestGetUserPassword(t *testing.T) {
+	email := testdata.UserTestData.Email
+	password := testdata.UserTestData.Password
+	gotPassword, err := repositories.GetUserPassword(testDB, email)
 	if err != nil {
 		t.Error(err)
 	}
-	if loginInUser.ID != expectedId {
-		t.Errorf("got %d but want %d", loginInUser.ID, expectedId)
+	if gotPassword != password {
+		t.Errorf("got %s but want %s", gotPassword, password)
 	}
 }

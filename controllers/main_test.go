@@ -12,6 +12,5 @@ var aCon *controllers.AuthController
 func TestMain(m *testing.M) {
 	ser := testdata.NewServiceMock()
 	aCon = controllers.NewAuthController(ser)
-
 	m.Run()
 }
