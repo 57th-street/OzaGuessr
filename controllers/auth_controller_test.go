@@ -11,6 +11,7 @@ import (
 	"github.com/57th-street/oza-gueser/repositories/testdata"
 )
 
+// 環境によってurlが変わるため今後改善の余地あり
 var baseUrl = "http://localhost:8080/"
 var userInput = controllers.UserInput{
 	Email:    testdata.UserTestData.Email,

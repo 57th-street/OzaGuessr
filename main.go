@@ -26,11 +26,6 @@ func main() {
 		return
 	}
 	defer db.Close()
-	if err := db.Ping(); err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("connect to DB")
-	}
 	api.NewRouter(db)
 	log.Println("server start at port 8080")
 }
