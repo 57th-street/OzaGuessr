@@ -50,7 +50,7 @@ func connectDB() error {
 	}
 	dbUser = os.Getenv("DB_USER")
 	dbPass = os.Getenv("DB_PASS")
-	dbName = os.Getenv("DB_NAME")
+	dbName = "test"
 	dbConn = fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?parseTime=true", dbUser, dbPass, dbName)
 	testDB, err = sql.Open("mysql", dbConn)
 	if err != nil {
