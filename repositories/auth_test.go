@@ -40,16 +40,17 @@ func TestCheckUserExist(t *testing.T) {
 func TestCreateUser(t *testing.T) {
 	email := "test2@test.com"
 	password := "hashedPassword2"
-	err := repositories.CreateUser(testDB, email, password)
+	result, err := repositories.CreateUser(testDB, email, password)
 	if err != nil {
 		t.Error(err)
 	}
-	var actualCount int
-	expectedCount := 1
-	sqlStr := "select count(*) from users where email = ? and password = ?"
-	err = testDB.QueryRow(sqlStr, email, password).Scan(&actualCount)
-	if actualCount != expectedCount {
-		t.Errorf("got %d but want %d", actualCount, expectedCount)
+	id, err := result.LastInsertId()
+	if err != nil {
+		t.Error(err)
+	}
+	expectedID := 2
+	if int(id) != expectedID {
+		t.Errorf("got %d but want %d", id, expectedID)
 	}
 	t.Cleanup(func() {
 		const sqlStr = "delete from users where email = ?"
@@ -57,14 +58,21 @@ func TestCreateUser(t *testing.T) {
 	})
 }
 
-func TestGetUserPassword(t *testing.T) {
+func TestGetUser(t *testing.T) {
+	id := testdata.UserTestData.ID
 	email := testdata.UserTestData.Email
 	password := testdata.UserTestData.Password
-	gotPassword, err := repositories.GetUserPassword(testDB, email)
+	user, err := repositories.GetUser(testDB, email)
 	if err != nil {
 		t.Error(err)
 	}
-	if gotPassword != password {
-		t.Errorf("got %s but want %s", gotPassword, password)
+	if int(user.ID) != id {
+		t.Errorf("got %d but want %d", user.ID, id)
+	}
+	if user.Email != email {
+		t.Errorf("got %s but want %s", user.Email, email)
+	}
+	if user.HashedPassword != password {
+		t.Errorf("got %s but want %s", user.HashedPassword, password)
 	}
 }

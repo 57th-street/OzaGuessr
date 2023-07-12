@@ -33,9 +33,9 @@ func TestRegister(t *testing.T) {
 	for _, tt := range tests {
 		mock.ExpectQuery(sqlStrCheckUserExist).WithArgs(email).WillReturnRows(sqlmock.NewRows([]string{"exists"}).AddRow(tt.userExists))
 		if !tt.userExists {
-			mock.ExpectExec(sqlStrCreateUser).WithArgs(email, password).WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectExec(sqlStrCreateUser).WithArgs(email, sqlmock.AnyArg()).WillReturnResult(sqlmock.NewResult(1, 1))
 		}
-		err := s.Register(email, password)
+		_, err := s.Register(email, password)
 		if !tt.errIs && err != nil {
 			t.Errorf("unexpected error: %v", err)
 		} else if tt.errIs && err == nil {
@@ -56,16 +56,16 @@ func TestLogin(t *testing.T) {
 		{"successLogin", false, false},
 		{"noData", true, true},
 	}
-	sqlStrGetUserPassword := "select password from users"
+	sqlStrGetUserPassword := "select id, email, password from users"
 	hashedPassword, _ := utils.HashPassword(password)
 
 	for _, tt := range tests {
 		if !tt.noData {
-			mock.ExpectQuery(sqlStrGetUserPassword).WithArgs(email).WillReturnRows(sqlmock.NewRows([]string{"password"}).AddRow(hashedPassword))
+			mock.ExpectQuery(sqlStrGetUserPassword).WithArgs(email).WillReturnRows(sqlmock.NewRows([]string{"id", "email", "password"}).AddRow(1, email, hashedPassword))
 		} else {
 			mock.ExpectQuery(sqlStrGetUserPassword).WithArgs(email).WillReturnError(sql.ErrNoRows)
 		}
-		err := s.Login(email, password)
+		_, err := s.Login(email, password)
 		if !tt.errIs && err != nil {
 			t.Errorf("unexpected error: %v", err)
 		} else if tt.errIs && err == nil {
