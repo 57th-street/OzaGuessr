@@ -6,6 +6,7 @@ import (
 
 	"github.com/57th-street/oza-gueser/apperrors"
 	"github.com/57th-street/oza-gueser/controllers/services"
+	"github.com/57th-street/oza-gueser/utils"
 )
 
 type AuthController struct {
@@ -26,10 +27,20 @@ func (c *AuthController) RegisterController(w http.ResponseWriter, req *http.Req
 	if err := json.NewDecoder(req.Body).Decode(&input); err != nil {
 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
 		apperrors.ErrorHandler(w, req, err)
+		return
 	}
-	if err := c.service.Register(input.Email, input.Password); err != nil {
+	userID, err := c.service.Register(input.Email, input.Password)
+	if err != nil {
 		apperrors.ErrorHandler(w, req, err)
+		return
 	}
+	tokenString, err := utils.GenerateToken(userID)
+	if err != nil {
+		err = apperrors.GenerateTokenFailed.Wrap(err, "fail to generate token")
+		apperrors.ErrorHandler(w, req, err)
+		return
+	}
+	w.Header().Set("Authorization", "Bearer "+tokenString)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -38,10 +49,19 @@ func (c *AuthController) LoginController(w http.ResponseWriter, req *http.Reques
 	if err := json.NewDecoder(req.Body).Decode(&input); err != nil {
 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
 		apperrors.ErrorHandler(w, req, err)
+		return
 	}
-	err := c.service.Login(input.Email, input.Password)
+	userID, err := c.service.Login(input.Email, input.Password)
 	if err != nil {
 		apperrors.ErrorHandler(w, req, err)
+		return
 	}
+	tokenString, err := utils.GenerateToken(userID)
+	if err != nil {
+		err = apperrors.GenerateTokenFailed.Wrap(err, "fail to generate token")
+		apperrors.ErrorHandler(w, req, err)
+		return
+	}
+	w.Header().Set("Authorization", "Bearer "+tokenString)
 	w.WriteHeader(http.StatusOK)
 }

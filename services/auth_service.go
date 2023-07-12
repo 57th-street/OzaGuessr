@@ -9,40 +9,43 @@ import (
 	"github.com/57th-street/oza-gueser/utils"
 )
 
-func (s *Service) Register(email, password string) error {
+func (s *Service) Register(email, password string) (int, error) {
 	exists, err := repositories.CheckUserExist(s.db, email)
 	if err != nil {
-		err = apperrors.CheckDataExistFailed.Wrap(err, "fail to check if email already exists")
-		return err
+		err = apperrors.CheckDataExistFailed.Wrap(err, "fail to check user")
+		return 0, err
 	}
 	if exists {
 		err = apperrors.DataAlreadyExists.Wrap(err, "this email already exists")
-		return err
+		return 0, err
 	}
 	hashedPassword, err := utils.HashPassword(password)
 	if err != nil {
 		err = apperrors.HashPasswordFailed.Wrap(err, "fail to hash password")
-		return err
+		return 0, err
 	}
-	if err = repositories.CreateUser(s.db, email, hashedPassword); err != nil {
+	result, err := repositories.CreateUser(s.db, email, hashedPassword)
+	if err != nil {
 		err = apperrors.InsertDataFailed.Wrap(err, "fail to record data")
+		return 0, err
 	}
-	return nil
+	userID, _ := result.LastInsertId()
+	return int(userID), nil
 }
 
-func (s *Service) Login(email, password string) error {
-	hashedPassword, err := repositories.GetUserPassword(s.db, email)
+func (s *Service) Login(email, password string) (int, error) {
+	user, err := repositories.GetUser(s.db, email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			err = apperrors.NAData.Wrap(err, "no data")
-			return err
+			return 0, err
 		}
 		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
-		return err
+		return 0, err
 	}
-	if err = utils.CompareHashAndPassword(hashedPassword, password); err != nil {
+	if err = utils.CompareHashAndPassword(user.HashedPassword, password); err != nil {
 		err = apperrors.ComparePasswordFailed.Wrap(err, "password does not match")
-		return err
+		return 0, err
 	}
-	return nil
+	return user.ID, nil
 }
