@@ -1,6 +1,6 @@
 package services
 
 type AuthServicer interface {
-	Register(email, password string) error
-	Login(email, password string) error
+	Register(email, password string) (int, error)
+	Login(email, password string) (int, error)
 }

@@ -4,6 +4,12 @@ import (
 	"database/sql"
 )
 
+type User struct {
+	ID             int
+	Email          string
+	HashedPassword string
+}
+
 func CheckUserExist(db *sql.DB, email string) (bool, error) {
 	const sqlStr = `select exists (select 1 from users where email = ?);`
 	var exists bool
@@ -11,15 +17,14 @@ func CheckUserExist(db *sql.DB, email string) (bool, error) {
 	return exists, err
 }
 
-func CreateUser(db *sql.DB, email, hashedPassword string) error {
+func CreateUser(db *sql.DB, email, hashedPassword string) (sql.Result, error) {
 	const sqlStr = `insert into users (email, password, created_at) values (?, ?, now()); `
-	_, err := db.Exec(sqlStr, email, hashedPassword)
-	return err
+	return db.Exec(sqlStr, email, hashedPassword)
 }
 
-func GetUserPassword(db *sql.DB, email string) (string, error) {
-	const sqlStr = `select password from users where email = ?;`
-	var hashedPassword string
-	err := db.QueryRow(sqlStr, email).Scan(&hashedPassword)
-	return hashedPassword, err
+func GetUser(db *sql.DB, email string) (User, error) {
+	const sqlStr = `select id, email, password from users where email = ?;`
+	var user User
+	err := db.QueryRow(sqlStr, email).Scan(&user.ID, &user.Email, &user.HashedPassword)
+	return user, err
 }
