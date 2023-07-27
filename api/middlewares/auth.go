@@ -32,6 +32,11 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		token, err := utils.ValidateToken(tokenString)
+		if err != nil {
+			err = apperrors.Unauthorized.Wrap(err, "invalid id token")
+			apperrors.ErrorHandler(w, req, err)
+			return
+		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			// このコンテキストをセットする箇所は今後別パッケージに切り出す予定
