@@ -18,6 +18,7 @@ services:
       - .:/app
     ports:
       - 8080:8080
+    command: /bin/bash -c "go run main.go"
     depends_on:
       - mysql
   mysql:
