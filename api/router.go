@@ -12,8 +12,11 @@ import (
 func NewRouter(db *sql.DB) {
 	ser := services.NewService(db)
 	aCon := controllers.NewAuthController(ser)
+	uCon := controllers.NewUserController(ser)
 	http.HandleFunc("/health", middlewares.CorsMiddleware(controllers.HealthHandler))
 	http.HandleFunc("/register", middlewares.CorsMiddleware(aCon.RegisterController))
 	http.HandleFunc("/login", middlewares.CorsMiddleware(aCon.LoginController))
+	http.HandleFunc("/profile", middlewares.CorsMiddleware(middlewares.AuthMiddleware(uCon.GetProfileController)))
+	http.HandleFunc("/update-profile", middlewares.CorsMiddleware(middlewares.AuthMiddleware(uCon.UpdateProfileController)))
 	http.ListenAndServe(":8080", nil)
 }

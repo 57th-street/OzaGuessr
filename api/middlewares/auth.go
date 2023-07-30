@@ -13,8 +13,8 @@ import (
 
 type userIDKey struct{}
 
-func AuthMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
 		authorization := req.Header.Get("Authorization")
 
 		authHeaders := strings.Split(authorization, " ")
@@ -47,5 +47,5 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			err := apperrors.Unauthorized.Wrap(err, "invalid token")
 			apperrors.ErrorHandler(w, req, err)
 		}
-	})
+	}
 }
