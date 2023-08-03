@@ -7,20 +7,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/57th-street/oza-gueser/controllers"
-	"github.com/57th-street/oza-gueser/repositories/testdata"
+	"github.com/57th-street/oza-gueser/controllers/testdata"
 )
-
-// 環境によってurlが変わるため今後改善の余地あり
-var baseUrl = "http://localhost:8080/"
-var userInput = controllers.UserInput{
-	Email:    testdata.UserTestData.Email,
-	Password: testdata.UserTestData.Password,
-}
 
 func TestRegisterController(t *testing.T) {
 	buffer := &bytes.Buffer{}
-	if err := json.NewEncoder(buffer).Encode(userInput); err != nil {
+	if err := json.NewEncoder(buffer).Encode(testdata.UserInputTestData); err != nil {
 		t.Error(err)
 	}
 	req := httptest.NewRequest(http.MethodPost, baseUrl+"register", buffer)
@@ -33,7 +25,7 @@ func TestRegisterController(t *testing.T) {
 
 func TestLoginController(t *testing.T) {
 	buffer := &bytes.Buffer{}
-	if err := json.NewEncoder(buffer).Encode(userInput); err != nil {
+	if err := json.NewEncoder(buffer).Encode(testdata.UserInputTestData); err != nil {
 		t.Error(err)
 	}
 	req := httptest.NewRequest(http.MethodPost, baseUrl+"login", buffer)

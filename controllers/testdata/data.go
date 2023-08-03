@@ -1,9 +1,17 @@
 package testdata
 
-import "github.com/57th-street/oza-gueser/models"
+import (
+	"github.com/57th-street/oza-gueser/controllers"
+	"github.com/57th-street/oza-gueser/models"
+)
 
-var authUser = models.User{
-	ID:       1,
-	Email:    "test@test.com",
-	Password: "test1234",
+var UserInputTestData = controllers.UserInput{
+	Email:    testdata.UserTestData.Email,
+	Password: testdata.UserTestData.Password,
+}
+
+var ProfileTestData = models.Profile{
+	Name:     "testUser",
+	ImageUrl: "testImage.png",
+	Intro:    "テスト用自己紹介文です。",
 }

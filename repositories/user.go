@@ -8,7 +8,7 @@ import (
 
 func GetProfile(db *sql.DB, userId int) (models.Profile, error) {
 	var profile models.Profile
-	const sqlStr = `select name, image_url, intro form users where id = ?;`
+	const sqlStr = `select name, image_url, intro from users where id = ?;`
 	err := db.QueryRow(sqlStr, userId).Scan(&profile.Name, &profile.ImageUrl, &profile.Intro)
 	return profile, err
 }
