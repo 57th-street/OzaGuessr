@@ -1,0 +1,106 @@
+openapi: 3.0.0
+info:
+  title: OzaGuessr
+  description: OzaGuessr のGoのバックエンドAPIドキュメントです。
+  version: 0.1.0
+paths:
+  '/health':
+    get:
+      responses:
+        '200':
+          description: ヘルスチェックが成功した場合
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+  '/register':
+    post:
+      tags:
+        - ユーザー登録
+      summary: ユーザーの登録
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: OK@google.com
+                  description: ユーザーのメールアドレス
+                password:
+                  type: string
+                  example: password
+                  description: ユーザーのパスワード
+      responses:
+        '200':
+          description: 作成成功
+          headers:
+            Authorization:
+              schema:
+                type: string
+                example: Bareer xxxyyyy
+              description: 認証用のJWTトークン
+        '400':
+          description: リクエストボディが適切ではない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+  '/login':
+    post:
+      tags:
+        - ログイン認証
+      summary: ユーザーのログイン認証
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: OK@google.com
+                  description: ユーザーのメールアドレス
+                password:
+                  type: string
+                  example: password
+                  description: ユーザーのパスワード
+      responses:
+        '200':
+          description: 認証成功
+          headers:
+            Authorization:
+              schema:
+                type: string
+                example: Bareer xxxyyyy
+              description: 認証用のJWTトークン
+        '400':
+          description: リクエストボディが適切ではない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+components:
+  schemas:
+    BadRequest:
+      type: object
+      properties:
+        ErrCode:
+          type: string
+          example: R001
+        Message:
+          type: string
+          example: bad request
+        Err:
+          type: string
+          example: bad request
+    Health:
+      type: object
+      properties:
+        Status:
+          type: integer
+          example: 200
+        Message:
+          type: string
+          example: succeeded
