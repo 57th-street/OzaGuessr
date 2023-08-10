@@ -5,7 +5,7 @@ type ErrCode string
 const (
 	Unknown ErrCode = "U000"
 
-	// サービス層のエラー
+	// サービス層で発生したエラー
 	GetDataFailed         ErrCode = "S001"
 	InsertDataFailed      ErrCode = "S002"
 	HashPasswordFailed    ErrCode = "S003"
@@ -13,6 +13,7 @@ const (
 	CheckDataExistFailed  ErrCode = "S005"
 	NAData                ErrCode = "S006"
 	GenerateTokenFailed   ErrCode = "S007"
+	UpdateDataFailed      ErrCode = "S008"
 
 	// リクエストエラー
 	ReqBodyDecodeFailed ErrCode = "R001"
