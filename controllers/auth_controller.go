@@ -40,8 +40,9 @@ func (c *AuthController) RegisterController(w http.ResponseWriter, req *http.Req
 		apperrors.ErrorHandler(w, req, err)
 		return
 	}
-	w.Header().Set("Authorization", "Bearer "+tokenString)
+	resp := AuthResponse{AccessToken: tokenString}
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
 }
 
 func (c *AuthController) LoginController(w http.ResponseWriter, req *http.Request) {
@@ -62,6 +63,7 @@ func (c *AuthController) LoginController(w http.ResponseWriter, req *http.Reques
 		apperrors.ErrorHandler(w, req, err)
 		return
 	}
-	w.Header().Set("Authorization", "Bearer "+tokenString)
+	resp := AuthResponse{AccessToken: tokenString}
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
 }

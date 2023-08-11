@@ -35,18 +35,16 @@ paths:
       responses:
         '200':
           description: 作成成功
-          headers:
-            Authorization:
+          content:
+            application/json:
               schema:
-                type: string
-                example: Bareer xxxyyyy
-              description: 認証用のJWTトークン
+                $ref: '#/components/schemas/Auth'
         '400':
           description: リクエストボディが適切ではない
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BadRequest'
+                $ref: '#/components/schemas/Auth'
   '/login':
     post:
       tags:
@@ -69,18 +67,16 @@ paths:
       responses:
         '200':
           description: 認証成功
-          headers:
-            Authorization:
+          content:
+            application/json:
               schema:
-                type: string
-                example: Bareer xxxyyyy
-              description: 認証用のJWTトークン
+                $ref: '#/components/schemas/Auth'
         '400':
           description: リクエストボディが適切ではない
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BadRequest'
+                $ref: '#/components/schemas/Auth'
 components:
   schemas:
     BadRequest:
@@ -101,3 +97,20 @@ components:
         Message:
           type: string
           example: succeeded
+    Auth:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: tokenencodedbybase64
+        error:
+          $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      properties:
+        errCode:
+          type: string
+          example: R001
+        message:
+          type: string
+          example: bad request
