@@ -86,13 +86,10 @@ components:
     BadRequest:
       type: object
       properties:
-        ErrCode:
+        errCode:
           type: string
           example: R001
-        Message:
-          type: string
-          example: bad request
-        Err:
+        message:
           type: string
           example: bad request
     Health:
