@@ -4,6 +4,8 @@ up: ## Start local server
 	docker compose up
 login:  ## Login mysql server
 	mysql -h 127.0.0.1 -u root ozaki --password=pass
+local-migrate: ## Migrate query disignated by CONFIG path
+	mysql -h 127.0.0.1 -u root ozaki -p < $(CONFIG)
 test:  ## Execute local test
 	go test ./...
 help: ## Show options
