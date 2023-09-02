@@ -32,7 +32,7 @@ func (q *QuizController) CreateQuizController(w http.ResponseWriter, req *http.R
 	w.WriteHeader(http.StatusOK)
 }
 
-func (q *QuizController) GetQuizController(w http.ResponseWriter, req *http.Request) {
+func (q *QuizController) GetQuizzesController(w http.ResponseWriter, req *http.Request) {
 	param, err := utils.GetPathParam(req.URL.Path)
 	if err != nil {
 		err = apperrors.InvalidPathParam.Wrap(err, "invalid path parameter")

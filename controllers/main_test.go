@@ -11,10 +11,12 @@ import (
 var baseUrl = "http://localhost:8080/"
 var aCon *controllers.AuthController
 var uCon *controllers.UserController
+var qCon *controllers.QuizController
 
 func TestMain(m *testing.M) {
 	ser := testdata.NewServiceMock()
 	aCon = controllers.NewAuthController(ser)
 	uCon = controllers.NewUserController(ser)
+	qCon = controllers.NewQuizController(ser)
 	m.Run()
 }
