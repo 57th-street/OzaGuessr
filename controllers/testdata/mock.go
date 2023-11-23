@@ -25,3 +25,11 @@ func (s *serviceMock) GetProfileService(userId int) (models.Profile, error) {
 func (s *serviceMock) UpdateProfileService(userId int, profile models.Profile) error {
 	return nil
 }
+
+func (s *serviceMock) CreateQuizService(quiz models.Quiz) error {
+	return nil
+}
+
+func (s *serviceMock) GetQuizzesService(categoryID int) ([]models.Quiz, error) {
+	return QuizTestData, nil
+}

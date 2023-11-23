@@ -61,14 +61,15 @@ func connectDB() error {
 
 func setup() error {
 	if err := connectDB(); err != nil {
+		fmt.Printf("Failed to connect db: %s", err)
 		return err
 	}
 	if err := cleanupDB(); err != nil {
-		fmt.Println("cleanup", err)
+		fmt.Printf("Failed to clean up db: %s", err)
 		return err
 	}
 	if err := setupTestData(); err != nil {
-		fmt.Println("setup")
+		fmt.Printf("Failed to set up test data: %s", err)
 		return err
 	}
 	return nil

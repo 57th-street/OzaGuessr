@@ -17,6 +17,7 @@ func NewRouter(db *sql.DB) {
 	http.HandleFunc("/register", middlewares.CorsMiddleware(aCon.RegisterController))
 	http.HandleFunc("/login", middlewares.CorsMiddleware(aCon.LoginController))
 	http.HandleFunc("/profile", middlewares.CorsMiddleware(middlewares.AuthMiddleware(uCon.GetProfileController)))
-	http.HandleFunc("/update-profile", middlewares.CorsMiddleware(middlewares.AuthMiddleware(uCon.UpdateProfileController)))
+	http.HandleFunc("/create-quiz", middlewares.CorsMiddleware(middlewares.AuthMiddleware(uCon.UpdateProfileController)))
+	http.HandleFunc("/get-quiz/", middlewares.CorsMiddleware(middlewares.AuthMiddleware(uCon.UpdateProfileController)))
 	http.ListenAndServe(":8080", nil)
 }

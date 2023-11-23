@@ -11,3 +11,8 @@ type UserServicer interface {
 	GetProfileService(userId int) (models.Profile, error)
 	UpdateProfileService(userId int, profile models.Profile) error
 }
+
+type QuizServicer interface {
+	CreateQuizService(quiz models.Quiz) error
+	GetQuizzesService(categoryID int) ([]models.Quiz, error)
+}

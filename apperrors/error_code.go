@@ -18,6 +18,7 @@ const (
 	// リクエストエラー
 	ReqBodyDecodeFailed ErrCode = "R001"
 	DataAlreadyExists   ErrCode = "R002"
+	InvalidPathParam    ErrCode = "R003"
 
 	//　認証エラー
 	RequiredAuthorizationHeader ErrCode = "A001"
